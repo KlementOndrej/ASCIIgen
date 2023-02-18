@@ -1,0 +1,53 @@
+from tkinter import *
+from PIL import Image, ImageTk
+from AsciiConvertor import ImageToConvert
+
+### nastavi zobrazovany obrazek
+def setImage(img):
+    label = Label(image=img)
+    label.grid(row=1, column=0, columnspan=4)
+
+### ulozi oba generovane obrazky
+def save():
+    mon.save("monochrome.png")
+    col.save("clour.png")
+
+print("ASCII image converter")
+print("Enter a name of file to convert")
+file_name = input()
+print("Enter scale of conversion(default: 0.1)")
+scale = float(input() or "0.1")
+
+
+root = Tk()
+
+im = ImageToConvert(file_name)      #otevre obrazek
+im.scale(scale)                       #skaluje obrazek
+
+im.imageToText("reverse")           #prevede obrazek na text ze znaku ze znakove sady reverse
+
+monochromeim = im.textToImage()     #prevede tex na obrazek
+colourim = im.imageToColorImage("long") #prevede obrazek na obrazek ze znaku ze znakove sady long
+
+### skaluje obrazky a upravi pro zobrazeni v tkinter
+mon =  monochromeim.resize((int(monochromeim.width*800/monochromeim.height), 800))
+col = colourim.resize((int(monochromeim.width*800/monochromeim.height), 800))
+monochromeim = ImageTk.PhotoImage(mon)
+colourim = ImageTk.PhotoImage(col)
+
+root.title("Image Viewer")
+root.geometry("800x900")
+
+### vytvori a zobrazi rozhrani
+label = Label(image=monochromeim)
+label.grid(row=1, column=0, columnspan=4) 
+button_mono = Button(root, text="Monochrome", command=lambda: setImage(monochromeim))
+button_exit = Button(root, text="Exit", command=root.quit)
+button_save = Button(root, text="Save", command=save())
+button_col = Button(root, text="Colour", command=lambda: setImage(colourim))
+button_mono.grid(row=5, column=0)
+button_exit.grid(row=5, column=1)
+button_save.grid(row=5, column=2)
+button_col.grid(row=5, column=3)
+
+root.mainloop()
