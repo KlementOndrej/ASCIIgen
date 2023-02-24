@@ -14,21 +14,27 @@ class ImageToConvert:
         self.input_image.resize((int(self.input_image.width), int(self.input_image.height*(10/18)))) #zmeni pomer stran aby kompenzoval rozmery znaku
         self.ascii_text = ""
     
-    ### skaluje obrazek
     def scale(self, scale_factor: float):
+        """
+        Scales image by provided scale_factor
+        """
         self.input_image = self.input_image.resize((int(scale_factor*self.input_image.width), int(scale_factor*self.input_image.height*(10/18))))   
                                                         #zmeni rozmery podle zadaneho pomeru
         
-    ### vezme intenzitu barvy a urci ji znak ktery ji ma reprezentovat
     def pickChar(self, ipt: int, chset: str = "default"):
+        """
+        Picks character from charset(chset) representing colour intensity(ipt)
+        """
         characters = list(self.charset[chset])          #nahraje charset
         char_length = len(characters)
         interval = char_length/256                      #urci interval podle ktereho se stupnuji barvy
         output = characters[int(ipt*interval)]          #vezme na zacatku zadanou intenzitu barvy a urci ji vhodny znak
         return output
 
-    ### prevede obrazek na text
     def imageToText(self, chset: str = "default"):
+        """
+        Converts image to text with selected charset(chset)
+        """
         image_pix = self.input_image.load()                 #nahraje pixely obrazku
         print(self.input_image.width, self.input_image.height)
         for y in range(self.input_image.height):            #postupne jde po radkach pixelu
@@ -38,8 +44,10 @@ class ImageToConvert:
                 self.ascii_text = self.ascii_text + self.pickChar(c, chset)     #prida znak, urceny na zaklade intenzity, do retezce
             self.ascii_text = self.ascii_text + "\n"                    #na konci radku pixelu udela novou radku v textu
 
-    ### generuje orazek z textu
     def textToImage(self):
+        """
+        Returns image generated from text
+        """
         if self.ascii_text == "":
             print("This image was not yet converted to text")
             return
@@ -52,8 +60,10 @@ class ImageToConvert:
             i = i + 1
         return output_image
 
-    ### generuje obrazek slozeny z barevnych znaku
     def imageToColorImage(self, chset: str = "default"):
+        """
+        Returns image generated from text with colour converted from image
+        """
         output_image = Image.new('RGB', (int(self.input_image.width*10), int(self.input_image.height*18)), 'white') 
                                                         #vytvori novy obrazek s puvodnim pomerem stran      
         image_pix = self.input_image.load()                  #nahraje pixely obrazku
